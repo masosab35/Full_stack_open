@@ -1,0 +1,18 @@
+sequenceDiagram
+    Browser->>Server: GET https://studies.cs.helsinki.fi/exampleapp/spa
+    Server-->>Browser: 200 OK HTML document
+    Browser->>Server: GET https://studies.cs.helsinki.fi/exampleapp/main.css
+    Server->>Browser: 200 OK CSS stylesheet
+    Browser->>Server: GET https://studies.cs.helsinki.fi/exampleapp/main.js
+    Server->>Browser: 200 OK JS script
+      %%`JS fetches JSON`%%
+    Browser->>Server:  GET https://studies.cs.helsinki.fi/exampleapp/data.json
+    Server->>Browser: 202 OK JSON
+    Browser->>Server: 	GET https://studies.cs.helsinki.fi/favicon.ico
+    Server->>Browser: 404 Not Found
+       %%`User adds a new note, stores it locally and makes a POST `%%
+    Browser->>Server: 	POST https://studies.cs.helsinki.fi/exampleapp/new_note
+    Server->>Browser: 201 Created
+ 
+    
+   
