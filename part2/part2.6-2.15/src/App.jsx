@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import AllPerson from './components/allPerson'
 import PersonForm from './components/personForm'
 import Filter from './components/filter'
+import Message from './components/message'
 import agenda from './services/agenda'
 
 const App = () => {
@@ -11,6 +12,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
+  const [message, setMessage] = useState(null)
 
   useEffect( () => {
     console.log("working")
@@ -28,6 +30,7 @@ const App = () => {
     if (persons.filter(person => person.name === newName).length > 0){
       if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)){
         modifyPerson(persons.filter(person => person.name === newName)[0].id, {name: newName, number: newNumber})
+        
         setNewName('')
         setNewNumber('')
         return
@@ -41,6 +44,7 @@ const App = () => {
     }
     agenda.create(nameObject).then(response => {
       setPersons(persons.concat(response))
+      setMessage(`Added "${newName}"`)
     })
     setNewName('')
     setNewNumber('')
@@ -62,10 +66,15 @@ const App = () => {
   const modifyPerson = (id, newObject) => {
     agenda.update(id, newObject).then(response => {
       setPersons(persons.map(p => p.id !== id ? p : response))
+      setMessage({content :`Changed "${newName}" number to ${newNumber}`, type: 'success'})
+    }).catch(error => {
+      setMessage(`Information of "${newName}" has already been removed from server`)
+      setPersons(persons.filter(person => person.id !== id))
     })
   }
   return (
     <div>
+      <Message message={message} />
       <h2>Phonebook</h2>
       <Filter filter= {filter} handleChangeFilter={handleChangeFilter}></Filter>
       <PersonForm handleFormSubmit={handleFormSubmit} handleChangeInput={handleChangeInput} handleChangeNumber={handleChangeNumber} newName={newName} newNumber={newNumber}/>
